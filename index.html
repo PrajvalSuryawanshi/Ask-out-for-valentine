@@ -4,7 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Valentines Day</title>
+
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Confetti (STABLE, NO MODULE) -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <style>
     .gradient-background {
@@ -21,22 +26,16 @@
     }
 
     @keyframes bounce2 {
-      0%, 20%, 50%, 80%, 100% {
-        transform: translateY(0);
-      }
-      40% {
-        transform: translateY(-20px);
-      }
-      60% {
-        transform: translateY(-10px);
-      }
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-20px); }
+      60% { transform: translateY(-10px); }
     }
   </style>
 </head>
 
 <body class="gradient-background">
 
-  <!--  AUDIO (same folder as index.html) -->
+  <!-- AUDIO -->
   <audio id="bgSong" src="song.mp3" preload="auto"></audio>
 
   <div class="flex items-center justify-center h-screen">
@@ -46,9 +45,9 @@
       <img
         id="imageDisplay"
         src="image1.gif"
-        alt="Cute kitten"
         class="rounded-md max-h-[300px] w-auto"
         style="object-fit: contain;"
+        alt="Cute"
       />
 
       <!-- TEXT -->
@@ -56,21 +55,21 @@
         id="valentineQuestion"
         class="text-4xl font-bold italic text-[#bd1e59] my-4 text-center"
       >
-        Will you be my Valentine Soan papri (tanishka) ?
+        Will you be my Valentine Soan papri (Tanishka)?
       </h2>
 
       <!-- BUTTONS -->
-      <div class="flex gap-4 pt-[20px] items-center" id="responseButtons">
+      <div class="flex gap-4 pt-[20px]" id="responseButtons">
         <button
           id="yesButton"
-          class="bounce2 rounded-md text-[20px] font-medium bg-green-500 hover:bg-green-400 text-white px-4 py-2 min-h-[48px] min-w-[80px] transition"
+          class="bounce2 bg-green-500 hover:bg-green-400 text-white px-4 py-2 rounded-md text-[20px]"
         >
           Yes
         </button>
 
         <button
           id="noButton"
-          class="rounded-md text-[20px] font-medium bg-red-500 hover:bg-red-700 text-white px-4 py-2 min-h-[48px] min-w-[80px] transition"
+          class="bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded-md text-[20px]"
         >
           No
         </button>
@@ -80,21 +79,15 @@
   </div>
 
   <!-- SCRIPT -->
-  <script type="module">
-    import confetti from 'https://cdn.skypack.dev/canvas-confetti';
-
-    const yesButton = document.getElementById('yesButton');
-    const noButton = document.getElementById('noButton');
-    const imageDisplay = document.getElementById('imageDisplay');
-    const valentineQuestion = document.getElementById('valentineQuestion');
-    const responseButtons = document.getElementById('responseButtons');
-    const bgSong = document.getElementById('bgSong');
+  <script>
+    const yesButton = document.getElementById("yesButton");
+    const noButton = document.getElementById("noButton");
+    const imageDisplay = document.getElementById("imageDisplay");
+    const valentineQuestion = document.getElementById("valentineQuestion");
+    const responseButtons = document.getElementById("responseButtons");
+    const bgSong = document.getElementById("bgSong");
 
     let noClickCount = 0;
-    let buttonHeight = 48;
-    let buttonWidth = 80;
-    let fontSize = 20;
-
     let songStarted = false;
 
     const imagePaths = [
@@ -110,55 +103,53 @@
     const noTexts = [
       "No",
       "Are you sure?",
-      "Pookie please ",
+      "Pookie please 🥺",
       "Don't do this to me :(",
-      "You're breaking my heart ",
+      "You're breaking my heart 💔",
       "I'm gonna cry..."
     ];
 
     function startSongSmooth() {
-      if (!songStarted) {
-        songStarted = true;
-        bgSong.volume = 0;
-        bgSong.play();
+      if (songStarted) return;
+      songStarted = true;
 
-        let vol = 0;
-        const fade = setInterval(() => {
-          if (vol < 0.6) {
-            vol += 0.05;
-            bgSong.volume = vol;
-          } else {
-            clearInterval(fade);
-          }
-        }, 200);
-      }
+      bgSong.volume = 0;
+      bgSong.play().catch(() => {});
+
+      let vol = 0;
+      const fade = setInterval(() => {
+        if (vol < 0.6) {
+          vol += 0.05;
+          bgSong.volume = vol;
+        } else {
+          clearInterval(fade);
+        }
+      }, 200);
     }
 
-    noButton.addEventListener('click', () => {
+    noButton.addEventListener("click", () => {
       startSongSmooth();
 
-      if (noClickCount < 5) {
+      if (noClickCount < imagePaths.length - 1) {
         noClickCount++;
         imageDisplay.src = imagePaths[noClickCount];
-
-        buttonHeight += 35;
-        buttonWidth += 35;
-        fontSize += 25;
-
-        yesButton.style.height = buttonHeight + "px";
-        yesButton.style.width = buttonWidth + "px";
-        yesButton.style.fontSize = fontSize + "px";
-
-        noButton.textContent = noTexts[noClickCount];
+        noButton.textContent = noTexts[noClickCount] || "No";
+        yesButton.style.transform = "scale(" + (1 + noClickCount * 0.25) + ")";
       }
     });
 
-    yesButton.addEventListener('click', () => {
+    yesButton.addEventListener("click", () => {
       imageDisplay.src = "image7.jpg";
-      valentineQuestion.textContent = "Yayyyy!! ";
+      valentineQuestion.textContent = "Yayyyy!! 💖🥹";
       responseButtons.style.display = "none";
-      confetti();
+
+      confetti({
+        particleCount: 150,
+        spread: 80,
+        origin: { y: 0.6 }
+      });
     });
   </script>
+
 </body>
 </html>
